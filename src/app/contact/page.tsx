@@ -68,7 +68,7 @@ export default function ContactUs() {
   
   return (
     <div className={`p-8 sm:p-20 transition-opacity duration-1000 ease-in-out ${
-      isVisible ? 'opacity-100' : 'opacity-0'
+      isVisible ? "opacity-100" : "opacity-0"
     }`}>
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-8 text-center">Contact Us</h1>
