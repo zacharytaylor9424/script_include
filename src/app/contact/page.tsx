@@ -53,7 +53,7 @@ export default function ContactUs() {
       
       // Reset form
       setFormData({ name: "", email: "", phone: "" })
-    } catch (error) {
+    } catch {
       // Dismiss loading toast and show error
       toast.dismiss(loadingToast)
       toast.error("Failed to send message", {
@@ -68,7 +68,7 @@ export default function ContactUs() {
   
   return (
     <div className={`p-8 sm:p-20 transition-opacity duration-1000 ease-in-out ${
-      isVisible ? 'opacity-100' : 'opacity-0'
+      isVisible ? "opacity-100" : "opacity-0"
     }`}>
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-8 text-center">Contact Us</h1>
@@ -78,7 +78,7 @@ export default function ContactUs() {
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold mb-4">Get in Touch</h2>
             <p className="text-lg text-gray-600">
-              We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+              We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
             </p>
             
             <div className="space-y-4">
