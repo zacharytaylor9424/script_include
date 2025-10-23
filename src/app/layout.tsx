@@ -39,7 +39,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
-				<nav className="w-full flex justify-between items-center mb-8 px-4 h-20">
+				<nav className="w-full flex justify-between items-center px-4 h-20">
 					{/* Logo */}
 					<div className="pt-2 pl-4">
 						<Link href="/" className="flex items-center">
