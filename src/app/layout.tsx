@@ -38,6 +38,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
+			<head>
+				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+			</head>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
 				<nav className="w-full flex justify-between items-center px-4 h-20">
 					{/* Logo */}
@@ -57,18 +60,16 @@ export default function RootLayout({
 					{/* Navigation Menu */}
 					<NavigationMenu>
 						<NavigationMenuList>
-							<NavigationMenuItem>
-								<NavigationMenuLink href="/">Home</NavigationMenuLink>
-							</NavigationMenuItem>							
 							{/* <NavigationMenuItem>
-								<NavigationMenuLink href="/contact">Contact Us</NavigationMenuLink>
+								<NavigationMenuLink href="/">Home</NavigationMenuLink>
+							</NavigationMenuItem> */}
+							{/* <NavigationMenuItem>
+								<NavigationMenuLink href="/turkey">Thanksgiving</NavigationMenuLink>
 							</NavigationMenuItem> */}
 						</NavigationMenuList>
 					</NavigationMenu>
 				</nav>
-				<main className="flex-1">
-					{children}
-				</main>
+				<main className="flex-1">{children}</main>
 				<footer className="w-full flex justify-center items-center px-4 h-20 mt-auto">
 					<p className="text-sm text-gray-500">
 						&copy; {new Date().getFullYear()} Script Include Ltd. All rights reserved.
