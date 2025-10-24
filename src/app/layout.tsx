@@ -42,9 +42,9 @@ export default function RootLayout({
 				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 			</head>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
-				<nav className="w-full flex justify-between items-center px-4 h-20">
+				<nav className="w-full flex justify-between items-center px-4 ">
 					{/* Logo */}
-					<div className="pt-2 pl-4">
+					{/* <div className="pt-2 pl-4">
 						<Link href="/" className="flex items-center">
 							<Image
 								src="/ScriptInclude.png"
@@ -55,7 +55,7 @@ export default function RootLayout({
 								priority
 							/>
 						</Link>
-					</div>
+					</div> */}
 
 					{/* Navigation Menu */}
 					<NavigationMenu>

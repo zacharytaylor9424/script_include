@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useItems } from "@/hooks/useItems";
 import { itemsAPI } from "@/lib/api";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
@@ -61,7 +61,7 @@ export default function HolidayPage() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		
+
 		if (!formData.name.trim() || !formData.value.trim()) {
 			return;
 		}
@@ -84,11 +84,11 @@ export default function HolidayPage() {
 		try {
 			if (editingItem) {
 				// Update existing item
-				const response = await itemsAPI.updateItem({ 
-					id: editingItem.id, 
-					name: formData.name, 
+				const response = await itemsAPI.updateItem({
+					id: editingItem.id,
+					name: formData.name,
 					value: formData.value,
-					recaptchaToken: token 
+					recaptchaToken: token,
 				});
 
 				if (!response.ok) {
@@ -120,9 +120,9 @@ export default function HolidayPage() {
 				await refetch(false);
 			} else {
 				// Create new item
-				const response = await itemsAPI.createItem({ 
-					...formData, 
-					recaptchaToken: token 
+				const response = await itemsAPI.createItem({
+					...formData,
+					recaptchaToken: token,
 				});
 
 				if (!response.ok) {
@@ -171,7 +171,7 @@ export default function HolidayPage() {
 			// Store the ID to delete in both state and ref
 			setDeletingId(id);
 			deletingIdRef.current = id;
-			
+
 			// Execute reCAPTCHA automatically for delete
 			recaptchaRef.current?.execute();
 		} catch (err) {
@@ -217,10 +217,27 @@ export default function HolidayPage() {
 
 	return (
 		<div
-			className={`container mx-auto px-4 py-8 transition-opacity duration-1000 ease-in-out ${
+			className={`container mx-auto px-4 py-2 transition-opacity duration-1000 ease-in-out ${
 				isVisible ? "opacity-100" : "opacity-0"
 			}`}>
-			<h1 className="text-3xl font-bold mb-6 text-aqua-forest-900">What are you bringing to Thanksgiving?</h1>
+			<h1 className="text-2xl font-bold mb-1 text-aqua-forest-800 text-center mt-4">
+				We're so glad you're joining us for Thanksgiving!
+			</h1>
+			<p className="text-aqua-forest-800 mb-1 font-bold italic"> Party Information:</p>
+			<ul className="list-disc list-inside text-aqua-forest-700 mb-10">
+				<li>
+					<span className="font-bold text-aqua-forest-800">Date:</span> Thursday, November 27th
+				</li>
+				<li>
+					<span className="font-bold text-aqua-forest-800">Time:</span> 3:00 PM
+				</li>
+				<li>
+					<span className="font-bold text-aqua-forest-800">Location:</span> Text Zach or Kerrie!
+				</li>
+			</ul>
+
+			<h2 className="text-aqua-forest-800 mt-4 text-2xl font-bold">The Menu</h2>
+			<p className="text-aqua-forest-700 mt-1 italic"> *If you need to edit or delete something, just tap the row.</p>
 
 			<div className="bg-white rounded-lg shadow-lg border border-aqua-forest-200 overflow-hidden">
 				<Table>
@@ -230,7 +247,7 @@ export default function HolidayPage() {
 							<TableHead className="text-aqua-forest-900 font-bold">
 								Name {refreshing && <span className="text-xs text-gray-500">(updating...)</span>}
 							</TableHead>
-							<TableHead className="text-aqua-forest-900 font-bold">Dish or Drink</TableHead>
+							<TableHead className="text-aqua-forest-900 font-bold">What you're bringing</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -244,10 +261,10 @@ export default function HolidayPage() {
 							items.map((item, index) => {
 								const isDeleting = deletingId === item.id;
 								return (
-									<TableRow 
-										key={item.id} 
+									<TableRow
+										key={item.id}
 										className={`hover:bg-aqua-forest-50 border-b border-aqua-forest-100 ${
-											isDeleting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer sm:cursor-default'
+											isDeleting ? "opacity-50 cursor-not-allowed" : "cursor-pointer sm:cursor-default"
 										}`}
 										onClick={() => {
 											// Only trigger on mobile (touch devices) and if not deleting
@@ -286,7 +303,7 @@ export default function HolidayPage() {
 								);
 							})
 						)}
-						
+
 						{/* Add Item Button Row */}
 						<TableRow className="border-t-2 border-aqua-forest-200">
 							<TableCell colSpan={3} className="text-center py-4">
@@ -314,12 +331,12 @@ export default function HolidayPage() {
 													onValueChange={(value) => setFormData({ ...formData, name: value })}
 													placeholder="Select your name"
 													options={nameOptions}
-													disabled={submitting}													
+													disabled={submitting}
 												/>
 											</div>
 											<div>
 												<label htmlFor="value" className="block text-sm font-medium text-aqua-forest-700 mb-2">
-													Dish or Drink
+													What you're bringing
 												</label>
 												<Input
 													id="value"
@@ -368,7 +385,7 @@ export default function HolidayPage() {
 			<div className="mt-4 text-sm text-aqua-forest-700 font-medium">Total items: {items.length}</div>
 
 			{/* Hidden reCAPTCHA for delete operations */}
-			<div style={{ display: 'none' }}>
+			<div style={{ display: "none" }}>
 				<Recaptcha
 					ref={recaptchaRef}
 					onChange={handleRecaptchaChange}
@@ -376,7 +393,6 @@ export default function HolidayPage() {
 					onError={handleRecaptchaError}
 				/>
 			</div>
-
 
 			{/* Edit Modal */}
 			<Sheet open={isEditOpen} onOpenChange={setIsEditOpen}>
@@ -417,12 +433,12 @@ export default function HolidayPage() {
 						</div>
 
 						<div className="flex gap-2 pt-4">
-								<Button
-									type="submit"
-									disabled={submitting}
-									className="bg-aqua-forest-600 hover:bg-aqua-forest-700 text-white transition-all duration-200 hover:scale-105">
-									{submitting ? "Updating..." : "Update Item"}
-								</Button>
+							<Button
+								type="submit"
+								disabled={submitting}
+								className="bg-aqua-forest-600 hover:bg-aqua-forest-700 text-white transition-all duration-200 hover:scale-105">
+								{submitting ? "Updating..." : "Update Item"}
+							</Button>
 							<Button
 								type="button"
 								variant="outline"
@@ -447,7 +463,8 @@ export default function HolidayPage() {
 					<AlertDialogHeader>
 						<AlertDialogTitle>Choose Action</AlertDialogTitle>
 						<AlertDialogDescription>
-							{selectedItem?.name}, what would you like to do with "{selectedItem?.value}"?
+							<span className="font-bold">{selectedItem?.name}</span>, what would you like to do with{" "}
+							<span className="font-bold">"{selectedItem?.value}"</span>?
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter className="flex-col sm:flex-row gap-2">
@@ -473,9 +490,7 @@ export default function HolidayPage() {
 							<i className="fas fa-trash mr-2"></i>
 							Delete
 						</AlertDialogAction>
-						<AlertDialogCancel 
-							onClick={handleActionDialogClose}
-							className="w-full sm:w-auto">
+						<AlertDialogCancel onClick={handleActionDialogClose} className="w-full sm:w-auto">
 							Cancel
 						</AlertDialogCancel>
 					</AlertDialogFooter>
