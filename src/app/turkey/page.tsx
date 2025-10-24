@@ -41,6 +41,7 @@ export default function HolidayPage() {
 	const [actionDialogOpen, setActionDialogOpen] = useState(false);
 	const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 	const recaptchaRef = useRef<RecaptchaRef>(null);
+	const deletingIdRef = useRef<string | null>(null);
 
 	// Predefined names for the combobox
 	const nameOptions = [
@@ -102,9 +103,9 @@ export default function HolidayPage() {
 
 				// Refresh the data to show updated item (silent refresh)
 				await refetch(false);
-			} else if (deletingId) {
+			} else if (deletingIdRef.current) {
 				// Delete item
-				const response = await itemsAPI.deleteItem(deletingId, token);
+				const response = await itemsAPI.deleteItem(deletingIdRef.current, token);
 
 				if (!response.ok) {
 					throw new Error(`HTTP error! status: ${response.status}`);
@@ -112,6 +113,7 @@ export default function HolidayPage() {
 
 				// Reset delete state
 				setDeletingId(null);
+				deletingIdRef.current = null;
 				recaptchaRef.current?.reset();
 
 				// Refresh the data to remove deleted item (silent refresh)
@@ -138,8 +140,9 @@ export default function HolidayPage() {
 		} catch (err) {
 			setLocalError(err instanceof Error ? err.message : "An error occurred");
 			// Clear deleting state on error
-			if (deletingId) {
+			if (deletingIdRef.current) {
 				setDeletingId(null);
+				deletingIdRef.current = null;
 			}
 		} finally {
 			setSubmitting(false);
@@ -147,14 +150,11 @@ export default function HolidayPage() {
 	};
 
 	const handleRecaptchaExpired = () => {
-		setDeletingId(null);
-		recaptchaRef.current?.reset();
+		// For v3, we don't need to handle expiration
 	};
 
 	const handleRecaptchaError = () => {
-		setDeletingId(null);
-		setLocalError("reCAPTCHA verification failed. Please try again.");
-		setSubmitting(false);
+		// For v3, errors are handled in the executeRecaptchaAction callback
 	};
 
 	const handleEdit = (item: Item) => {
@@ -168,11 +168,12 @@ export default function HolidayPage() {
 			setSubmitting(true);
 			setLocalError(null);
 
+			// Store the ID to delete in both state and ref
+			setDeletingId(id);
+			deletingIdRef.current = id;
+			
 			// Execute reCAPTCHA automatically for delete
 			recaptchaRef.current?.execute();
-			
-			// Store the ID to delete after reCAPTCHA completes
-			setDeletingId(id);
 		} catch (err) {
 			setLocalError(err instanceof Error ? err.message : "An error occurred");
 			setSubmitting(false);

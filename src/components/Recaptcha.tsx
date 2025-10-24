@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, forwardRef, useImperativeHandle } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
+import { useRef, forwardRef, useImperativeHandle, useCallback } from "react";
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 interface RecaptchaProps {
   onChange?: (token: string | null) => void;
@@ -15,22 +15,47 @@ export interface RecaptchaRef {
   getValue: () => string | null;
 }
 
-const Recaptcha = forwardRef<RecaptchaRef, RecaptchaProps>(
+const RecaptchaInner = forwardRef<RecaptchaRef, RecaptchaProps>(
   ({ onChange, onExpired, onError }, ref) => {
-    const recaptchaRef = useRef<ReCAPTCHA>(null);
+    const { executeRecaptcha } = useGoogleReCaptcha();
+
+    const executeRecaptchaAction = useCallback(async () => {
+      if (!executeRecaptcha) {
+        console.warn("reCAPTCHA not available");
+        return;
+      }
+
+      try {
+        const token = await executeRecaptcha("submit");
+        onChange?.(token);
+      } catch (error) {
+        console.error("reCAPTCHA execution error:", error);
+        onError?.();
+      }
+    }, [executeRecaptcha, onChange, onError]);
 
     useImperativeHandle(ref, () => ({
       reset: () => {
-        recaptchaRef.current?.reset();
+        // For v3, we don't need to reset anything - just do nothing
+        // The reset method is called after successful operations to clean up
       },
       execute: () => {
-        recaptchaRef.current?.execute();
+        executeRecaptchaAction();
       },
       getValue: () => {
-        return recaptchaRef.current?.getValue() || null;
+        // For v3, we don't store the value, it's passed to onChange
+        return null;
       },
     }));
 
+    return null; // v3 is invisible, no UI component needed
+  }
+);
+
+RecaptchaInner.displayName = "RecaptchaInner";
+
+const Recaptcha = forwardRef<RecaptchaRef, RecaptchaProps>(
+  (props, ref) => {
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
     if (!siteKey) {
@@ -39,15 +64,18 @@ const Recaptcha = forwardRef<RecaptchaRef, RecaptchaProps>(
     }
 
     return (
-			<ReCAPTCHA
-				ref={recaptchaRef}
-				sitekey={siteKey}
-				onChange={onChange}
-				onExpired={onExpired}
-				onError={onError}
-				size="invisible"
-			/>
-		);
+      <GoogleReCaptchaProvider
+        reCaptchaKey={siteKey}
+        scriptProps={{
+          async: false,
+          defer: false,
+          appendTo: "head",
+          nonce: undefined,
+        }}
+      >
+        <RecaptchaInner ref={ref} {...props} />
+      </GoogleReCaptchaProvider>
+    );
   }
 );
 
